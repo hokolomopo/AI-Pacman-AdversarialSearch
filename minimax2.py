@@ -13,7 +13,9 @@ class PacmanAgent(Agent):
         - `args`: Namespace of arguments from command-line prompt.
         """
         self.args = args
-        self.maxDepth = 20
+        self.visited = {}
+
+
 
     def get_action(self, state):
         """
@@ -40,7 +42,7 @@ class PacmanAgent(Agent):
 
         for s in state.generatePacmanSuccessors():
 
-            minimax = self.minimaxrec(s[0], 0, 0)
+            minimax = self.minimaxrec(s[0], 0)
             if minimax != None and minimax > max : 
                 max = minimax
                 action = s[1]
@@ -50,12 +52,27 @@ class PacmanAgent(Agent):
 
 
     def minimaxrec(self, state, player, dpt=0):
-        if state.isWin() or state.isLose() or dpt == self.maxDepth:
-            return state.getScore()  
+        if state.isWin() or state.isLose():
+            return state.getScore()
 
+        currentStateHash = self.hash_state(state, player)
+
+        if currentStateHash in self.visited:
+            visitedNode = self.visited[currentStateHash]
+
+            # Visited is a parent
+            if visitedNode == None :
+                return None
+
+            #Visited is another branch
+            # dptDif = dpt - visitedNode.dpt
+            dptDif = state.getScore() - visitedNode.currScore
+            return visitedNode.score + dptDif
+        
         successors = self.generateSuccessors(state, player)
         
         sol = []
+        self.visited[currentStateHash] = None
 
         for s in successors:
             newState = s[0]
@@ -64,6 +81,10 @@ class PacmanAgent(Agent):
                 sol.append(minimax)
                 
         best = self.getBest(sol, player)
+
+        if best != None:
+            self.visited[currentStateHash] = Node(dpt, best, state.getScore())
+
         return best
 
     def generateSuccessors(self, state, player):
@@ -89,6 +110,10 @@ class PacmanAgent(Agent):
 
     def hash_state(self, state, player):
         return (hash(state.getPacmanPosition()), hash(state.getGhostPositions()[0]),
-            hash(state.getFood()), player)
+            hash(state.getFood()))
 
-
+class Node:
+    def __init__(self, dpt, score, currScore=0):
+        self.dpt = dpt
+        self.score = score
+        self.currScore = currScore
