@@ -42,7 +42,7 @@ class PacmanAgent(Agent):
 
         for s in state.generatePacmanSuccessors():
 
-            minimax = self.minimaxrec(s[0], 0)
+            minimax = self.minimaxrec(s[0], 1)
             if minimax != None and minimax > max : 
                 max = minimax
                 action = s[1]
@@ -110,7 +110,7 @@ class PacmanAgent(Agent):
 
     def hash_state(self, state, player):
         return (hash(state.getPacmanPosition()), hash(state.getGhostPositions()[0]),
-            hash(state.getFood()))
+            hash(state.getFood()), player)
 
 class Node:
     def __init__(self, dpt, score, currScore=0):

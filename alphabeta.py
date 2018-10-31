@@ -37,10 +37,11 @@ class PacmanAgent(Agent):
         max = -INF
         action = Directions.STOP
 
-
+        interval=[-INF,+INF]
         for s in state.generatePacmanSuccessors():
 
-            minimax = self.minimaxrec(s[0], 1, 0)
+            minimax = self.minimaxrec(s[0], 1, 0, parentInterval=interval)
+            self.updateInterval(interval, minimax, 0)
             print(minimax, s[1])
             if minimax != None and minimax > max : 
                 max = minimax
@@ -50,23 +51,44 @@ class PacmanAgent(Agent):
         return action
 
 
-    def minimaxrec(self, state, player, dpt=0):
+    def minimaxrec(self, state, player, dpt=0, parentInterval=[-INF,+INF]):
         if state.isWin() or state.isLose() or dpt == self.maxDepth:
             return state.getScore()  
 
         successors = self.generateSuccessors(state, player)
         
         sol = []
-        
+
+        interval=[-INF,+INF]
+
         for s in successors:
             newState = s[0]
-            minimax = self.minimaxrec(newState, self.getNextPlayer(player), dpt+1)
-            if minimax != None:
-                sol.append(minimax)
-
+            minimax = self.minimaxrec(newState, self.getNextPlayer(player), dpt+1, interval)
+            sol.append(minimax)
+            if self.shouldStop(minimax, parentInterval, player):
+                break
+            self.updateInterval(interval, minimax, player)
 
         best = self.getBest(sol, player)
         return best
+
+
+    def shouldStop(self, minimax, interval, player):
+        if player == 0:
+            if minimax >= interval[1]:
+                return True
+            return False
+        else:
+            if minimax <= interval[0]:
+                return True
+            return False
+
+    def updateInterval(self,interval, minimax, player):
+        if player == 0:
+            interval[0] = max(minimax, interval[0])
+        else:
+            interval[1] = min(minimax, interval[1])
+
 
     def generateSuccessors(self, state, player):
         if player == 0:
