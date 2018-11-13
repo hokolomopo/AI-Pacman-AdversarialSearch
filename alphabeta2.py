@@ -60,17 +60,13 @@ class PacmanAgent(Agent):
         if currentStateHash in self.visited:
             visitedNode = self.visited[currentStateHash]
 
-            # Visited is another branch
-            if visitedNode != None:
-                dptDif = state.getScore() - visitedNode.currScore
-                return visitedNode.score + dptDif
-
             # Visited is a parent
-            # Here, even if the score of visitedNode is None, it doesn't garantee that the visited node is a parent,
-            # because it could juste have been pruned
-            elif currentStateHash in parents:
+            if visitedNode == None :
                 return None
-            
+
+            #Visited in another branch
+            dptDif = state.getScore() - visitedNode.currScore
+            return visitedNode.score + dptDif
 
         successors = self.generateSuccessors(state, player)
         
@@ -79,22 +75,26 @@ class PacmanAgent(Agent):
 
         interval=[-INF,+INF]
 
+        pruned = False
+
         for s in successors:
             newState = s[0]
             newParents = parents.copy()
             newParents.add(currentStateHash)
             minimax = self.minimaxrec(newState, self.getNextPlayer(player), dpt+1, interval, newParents)
-            if minimax != None:
+            if minimax is not None:
                 sol.append(minimax)
                 if self.shouldStop(minimax, parentInterval, player):
-                    return self.getBest(sol, player)
+                    pruned = True
+                    break
                 self.updateInterval(interval, minimax, player)
 
         best = self.getBest(sol, player)
 
-        if best != None:
+        if pruned or best == None:
+            del self.visited[currentStateHash]
+        elif best != None:
             self.visited[currentStateHash] = Node(dpt, best, state.getScore())
-
         return best
 
 

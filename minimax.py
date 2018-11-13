@@ -13,7 +13,7 @@ class PacmanAgent(Agent):
         - `args`: Namespace of arguments from command-line prompt.
         """
         self.args = args
-        self.maxDepth = 20
+        self.maxDepth = 10
 
     def get_action(self, state):
         """
@@ -50,7 +50,7 @@ class PacmanAgent(Agent):
         return action
 
 
-    def minimaxrec(self, state, player, dpt=0):
+    def minimaxrec(self, state, player, dpt=0,lstGhostMove = Directions.STOP):
         if state.isWin() or state.isLose() or dpt == self.maxDepth:
             return state.getScore()  
 
@@ -67,6 +67,8 @@ class PacmanAgent(Agent):
 
         best = self.getBest(sol, player)
         return best
+
+
 
     def generateSuccessors(self, state, player):
         if player == 0:

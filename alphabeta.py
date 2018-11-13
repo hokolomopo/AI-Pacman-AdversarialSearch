@@ -13,7 +13,7 @@ class PacmanAgent(Agent):
         - `args`: Namespace of arguments from command-line prompt.
         """
         self.args = args
-        self.maxDepth = 20
+        self.maxDepth = 10
 
     def get_action(self, state):
         """

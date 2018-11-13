@@ -8,7 +8,7 @@ from pacman_module.ghostAgents import GreedyGhost, SmartyGhost, DumbyGhost
 
 #Same things as run.py but with a different default agent for easier testing ;) 
 defaultAgent = "alphabeta2.py"
-defaultLayout = "medium_adv"
+defaultLayout = "small_adv"
 defaultGhost="smarty"
 silentDisplay = 0
 
