@@ -340,8 +340,8 @@ class ClassicGameRules:
             self.lose(state, game)
 
     def win(self, state, game):
-        if not self.quiet:
-            print("Pacman emerges victorious! Score: %d" % state.data.score)
+        # if not self.quiet:
+            # print("Pacman emerges victorious! Score: %d" % state.data.score)
         game.gameOver = True
 
     def lose(self, state, game):

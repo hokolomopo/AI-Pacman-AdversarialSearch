@@ -13,7 +13,7 @@ class PacmanAgent(Agent):
         - `args`: Namespace of arguments from command-line prompt.
         """
         self.args = args
-        self.maxDepth = 5
+        self.maxDepth = 10
 
     def get_action(self, state):
         """
@@ -30,8 +30,7 @@ class PacmanAgent(Agent):
         """
 
         action = self.minimax(state)
-        if action == Directions.STOP:
-            print("A rien ne sert de courir")
+        print(action)
         return action
 
     def minimax(self, state):
@@ -42,16 +41,18 @@ class PacmanAgent(Agent):
         for s in state.generatePacmanSuccessors():
 
             minimax = self.minimaxrec(s[0], 1, 0)
+            print(minimax, s[1])
             if minimax != None and minimax > max : 
                 max = minimax
                 action = s[1]
 
+        print(max)
         return action
 
 
     def minimaxrec(self, state, player, dpt=0,lstGhostMove = Directions.STOP):
         if state.isWin() or state.isLose() or dpt == self.maxDepth:
-            return self.getEstimate(state)
+            return state.getScore()  
 
         successors = self.generateSuccessors(state, player)
         
@@ -67,51 +68,11 @@ class PacmanAgent(Agent):
         best = self.getBest(sol, player)
         return best
 
-    def getEstimate(self, state):
-        """
-        Compute the estimated minimax score from this state.
-
-        Arguments:
-        ----------
-        - `state`: the current game state. See FAQ and class
-                `pacman.GameState`. Return:
-        -------
-        - The computed estimated score
-        """
-        
-        FOOD_COEF = -10
-        DIST_COEF = -1
-
-        pacmanPosition = state.getPacmanPosition()
-        foodMatrix = state.getFood()
-
-        # Distance between pacman and farthest food dot
-        maxDistance = 0
-
-        # Number of food left
-        nbFoods = 0
-
-        for i in range(foodMatrix.width):
-            for j in range(foodMatrix.height):
-                if foodMatrix[i][j]:
-                    nbFoods += 1
-                    tmp = self.__compute_distance(pacmanPosition, (i, j))
-                    if tmp > maxDistance:
-                        maxDistance = tmp
-
-        estimate = nbFoods * FOOD_COEF +  maxDistance * DIST_COEF + state.getScore()
-
-        return estimate
-
 
 
     def generateSuccessors(self, state, player):
         if player == 0:
-            nextStates = state.generatePacmanSuccessors()
-            # We are near a wall
-            if len(nextStates) < 3:
-                nextStates.append((state, Directions.STOP))
-            return nextStates
+            return state.generatePacmanSuccessors()
         else :
             return state.generateGhostSuccessors(1)
 
@@ -134,20 +95,4 @@ class PacmanAgent(Agent):
         return (hash(state.getPacmanPosition()), hash(state.getGhostPositions()[0]),
             hash(state.getFood()), player)
 
-    def __compute_distance(self, position1, position2):
-        """
-        Compute the Manhattan distance beteween 2 positions.
-
-        Arguments:
-        ----------
-        - `position1`, `position2`: two tuples representing
-          positions`.
-
-        Return:
-        -------
-        - The Manhattan distance between the 2 positions
-        """
-
-        return abs(position1[0] - position2[0]) \
-            + abs(position1[1] - position2[1])
 

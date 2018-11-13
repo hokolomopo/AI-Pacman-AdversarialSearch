@@ -7,10 +7,10 @@ from pacman_module.pacman import runGame
 from pacman_module.ghostAgents import GreedyGhost, SmartyGhost, DumbyGhost
 
 #Same things as run.py but with a different default agent for easier testing ;) 
-defaultAgent = "minimax.py"
+defaultAgent = "alphabeta2.py"
 defaultLayout = "small_adv"
 defaultGhost="smarty"
-silentDisplay = 0
+silentDisplay = 1
 
 
 def restricted_float(x):
@@ -49,7 +49,7 @@ ghosts["greedy"] = GreedyGhost
 ghosts["smarty"] = SmartyGhost
 ghosts["dumby"] = DumbyGhost
 
-if __name__ == '__main__':
+def run(agent=defaultAgent, ghost=defaultGhost, layout=defaultLayout):
     sys.setrecursionlimit(8000)
 
     usage = """
@@ -64,15 +64,15 @@ if __name__ == '__main__':
     parser.add_argument(
         '--agentfile',
         help='Python file containing a `PacmanAgent` class.',
-        default=defaultAgent)
+        default=agent)
     parser.add_argument(
         '--ghostagent',
         help='Ghost agent available in the `ghostAgents` module.',
-        choices=["dumby", "greedy", "smarty"], default=defaultGhost)
+        choices=["dumby", "greedy", "smarty"], default=ghost)
     parser.add_argument(
         '--layout',
         help='Maze layout (from layout folder).',
-        default=defaultLayout)
+        default=layout)
     parser.add_argument(
         '--silentdisplay',
         help="Disable the graphical display of the game.",
@@ -94,6 +94,4 @@ if __name__ == '__main__':
     total_score, total_computation_time, total_expanded_nodes = runGame(
         args.layout, agent, gagts, not silentDisplay, expout=0)
 
-    print("Total score : " + str(total_score))
-    print("Total computation time (seconds) : " + str(total_computation_time))
-    print("Total expanded nodes : " + str(total_expanded_nodes))
+    return [total_score, total_computation_time, total_expanded_nodes]
