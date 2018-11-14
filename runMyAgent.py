@@ -19,7 +19,6 @@ def restricted_float(x):
         raise ArgumentTypeError("%r not in range [0.1, 1.0]" % (x,))
     return x
 
-
 def positive_integer(x):
     x = int(x)
     if x < 0:

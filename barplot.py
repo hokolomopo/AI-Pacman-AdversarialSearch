@@ -2,7 +2,7 @@ from runPlot import run
 import matplotlib.pyplot as plt
 
 saveFolderPath = "graphs/"
-fileType = ".pdf"
+fileType = ".eps"
 
 if __name__ == '__main__':
     layouts = ["small_adv", "medium_adv", "large_adv"]
@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     for i in range(len(ghosts)):
         for j in range(len(agents)):
+            print((i * len(ghosts) + j )/ (len(ghosts)*len(agents))*100, "%")
             time = 0
             for k in range(N):
                 result = run(agent=agents[j], ghost=ghosts[i], layout=layouts[0])
@@ -55,7 +56,7 @@ if __name__ == '__main__':
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str(y[j]), horizontalalignment='center')
 
-        plt.savefig(saveFolderPath + "score" + ghosts[i] +"Ghost" + fileType)
+        plt.savefig(saveFolderPath + "score" + ghosts[i].capitalize() +"Ghost" + fileType)
 
         # Draw time diagram
         y = times[i*N:(i+1)*N]
@@ -67,7 +68,7 @@ if __name__ == '__main__':
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str("{0:.4f}".format(y[j])), horizontalalignment='center')
 
-        plt.savefig(saveFolderPath + "time" + ghosts[i] +"Ghost" + fileType)
+        plt.savefig(saveFolderPath + "time" + ghosts[i].capitalize() +"Ghost" + fileType)
 
         # Draw nodes diagram
         y = nodes[i*N:(i+1)*N]
@@ -78,6 +79,6 @@ if __name__ == '__main__':
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str(y[j]), horizontalalignment='center')
 
-        plt.savefig(saveFolderPath + "nodes" + ghosts[i] +"Ghost" + fileType)
+        plt.savefig(saveFolderPath + "nodes" + ghosts[i].capitalize() +"Ghost" + fileType)
 
 
