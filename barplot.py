@@ -36,6 +36,7 @@ if __name__ == '__main__':
             # Do the mean of execution times
             times.append(time/N)
 
+    plt.rcParams.update({'font.size': 13})
 
     # Draw plots
     for i in range(len(ghosts)):
@@ -51,7 +52,7 @@ if __name__ == '__main__':
         y = scores[i*N:(i+1)*N]
         plt.figure()
         plt.bar(x, y, width, color=colors)
-        plt.title(ghosts[i].capitalize() + " : Scores")
+        # plt.title(ghosts[i].capitalize() + " : Scores")
         plt.ylabel("Score")
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str(y[j]), horizontalalignment='center')
@@ -63,7 +64,7 @@ if __name__ == '__main__':
         plt.figure()
         y = [float("{0:.4f}".format(item)) for item in y]
         plt.bar(x, y, width, color=colors)
-        plt.title(ghosts[i].capitalize() + " : Times")
+        # plt.title(ghosts[i].capitalize() + " : Times")
         plt.ylabel("Time (secondes)")
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str("{0:.4f}".format(y[j])), horizontalalignment='center')
@@ -74,7 +75,7 @@ if __name__ == '__main__':
         y = nodes[i*N:(i+1)*N]
         plt.figure()
         plt.bar(x, y, width, color=colors)
-        plt.title(ghosts[i].capitalize() + " : Nodes")
+        # plt.title(ghosts[i].capitalize() + " : Nodes")
         plt.ylabel("Explored Nodes")
         for j in range(N):
             plt.text(x[j], y[j]+max(y)*0.01, str(y[j]), horizontalalignment='center')

@@ -7,7 +7,7 @@ from pacman_module.pacman import runGame
 from pacman_module.ghostAgents import GreedyGhost, SmartyGhost, DumbyGhost
 
 #Same things as run.py but with a different default agent for easier testing ;) 
-defaultAgent = "minimax.py"
+defaultAgent = "minimaxcaro.py"
 defaultLayout = "small_adv"
 defaultGhost="smarty"
 silentDisplay = 0
