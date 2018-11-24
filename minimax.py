@@ -30,10 +30,10 @@ class PacmanAgent(Agent):
         - A legal move as defined in `game.Directions`.
         """
 
-        action = self.minimax(state)
+        action = self._minimax(state)
         return action
 
-    def minimax(self, state):
+    def _minimax(self, state):
         """
         Given a pacman game state, returns the best legal move computed with
         the minimax algorithm.
@@ -55,14 +55,14 @@ class PacmanAgent(Agent):
         for s in state.generatePacmanSuccessors():
 
             # Update the best minimax score and action
-            minimax = self.minimaxrec(s[0], 1)
+            minimax = self._minimaxrec(s[0], 1)
             if minimax is not None and minimax > max:
                 max = minimax
                 action = s[1]
 
         return action
 
-    def minimaxrec(self, state, player, dpt=0, lastPacmanMove=None,
+    def _minimaxrec(self, state, player, dpt=0, lastPacmanMove=None,
                    lastGhostMove=None):
         """
         Return the minimax score of a state.
@@ -86,7 +86,7 @@ class PacmanAgent(Agent):
             return state.getScore()
 
         # Get the unique key of this game state
-        currentStateHash = self.hash_state(
+        currentStateHash = self._hash_state(
             state, player, lastGhostMove, lastPacmanMove)
 
         # Check if this node is already visited
@@ -102,7 +102,7 @@ class PacmanAgent(Agent):
             return visitedNode.score + dptDif
 
         # Generate the successors of this state
-        successors = self.generateSuccessors(state, player, lastPacmanMove)
+        successors = self._generateSuccessors(state, player, lastPacmanMove)
 
         # sol  will be the array conaining the minimax results of the children
         sol = []
@@ -115,17 +115,17 @@ class PacmanAgent(Agent):
 
             # Pacman is playing, update last Pacman move
             if(player == 0):
-                minimax = self.minimaxrec(newState, self.getNextPlayer(
+                minimax = self._minimaxrec(newState, self._getNextPlayer(
                     player), dpt + 1, direction, lastGhostMove)
             # Ghost is playing, update last ghost move
             else:
-                minimax = self.minimaxrec(newState, self.getNextPlayer(
+                minimax = self._minimaxrec(newState, self._getNextPlayer(
                     player), dpt + 1, lastPacmanMove, direction)
             if minimax is not None:
                 sol.append(minimax)
 
         # Get the best minimax score
-        best = self.getBest(sol, player)
+        best = self._getBest(sol, player)
 
         # Memorize the minimax score if we found one
         if best is not None:
@@ -137,7 +137,7 @@ class PacmanAgent(Agent):
 
         return best
 
-    def generateSuccessors(self, state, player, lastPacmanMove=None):
+    def _generateSuccessors(self, state, player, lastPacmanMove=None):
         """
         Generate successors of the node. If we give the last move of pacman
         as argument, it can possiblygenerate a successor with
@@ -165,14 +165,14 @@ class PacmanAgent(Agent):
                 return nextStates
 
             # If Pacman can stop moving, add an action STOP in the successors
-            if self.canPacmanStop(state, lastPacmanMove):
+            if self._canPacmanStop(state, lastPacmanMove):
                 nextStates.append((state, Directions.STOP))
 
             return nextStates
         else:
             return state.generateGhostSuccessors(1)
 
-    def canPacmanStop(self, state, lastPacmanMove):
+    def _canPacmanStop(self, state, lastPacmanMove):
         """
         Check if Pacman can stay still. Pacman can stay still when he collides
             with a wall and is not given any input.
@@ -204,7 +204,7 @@ class PacmanAgent(Agent):
             return True
         return False
 
-    def getBest(self, solutions, player):
+    def _getBest(self, solutions, player):
         """
         Given an array of minimax score, return the best score for this player.
 
@@ -225,7 +225,7 @@ class PacmanAgent(Agent):
         else:
             return min(solutions)
 
-    def getNextPlayer(self, player):
+    def _getNextPlayer(self, player):
         """
         Get the id of the next player that will play.
 
@@ -243,7 +243,7 @@ class PacmanAgent(Agent):
         else:
             return 0
 
-    def hash_state(self, state, player, lastGhostMove, lastPacmanMove):
+    def _hash_state(self, state, player, lastGhostMove, lastPacmanMove):
         """
         Create an unique tuple representing this game state.
 
@@ -261,10 +261,10 @@ class PacmanAgent(Agent):
         - A unique tuple representing this game state
         """
 
-        return (hash(state.getPacmanPosition()),
-                hash(state.getGhostPositions()[0]),
+        return (state.getPacmanPosition(),
+                state.getGhostPositions()[0],
                 hash(state.getFood()), player, lastGhostMove,
-                self.canPacmanStop(state, lastPacmanMove))
+                self._canPacmanStop(state, lastPacmanMove))
 
 
 class Node:

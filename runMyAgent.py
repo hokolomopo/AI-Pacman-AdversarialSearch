@@ -7,10 +7,10 @@ from pacman_module.pacman import runGame
 from pacman_module.ghostAgents import GreedyGhost, SmartyGhost, DumbyGhost
 
 #Same things as run.py but with a different default agent for easier testing ;) 
-defaultAgent = "minimaxcaro.py"
+defaultAgent = "alphabeta.py"
 defaultLayout = "small_adv"
 defaultGhost="smarty"
-silentDisplay = 0
+silentDisplay = 1
 
 
 def restricted_float(x):

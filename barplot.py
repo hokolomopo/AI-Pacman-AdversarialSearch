@@ -17,7 +17,7 @@ if __name__ == '__main__':
     nodes = []
 
     # N = number of runs to determine the mean time
-    N = 100
+    N = 1
 
     for i in range(len(ghosts)):
         for j in range(len(agents)):

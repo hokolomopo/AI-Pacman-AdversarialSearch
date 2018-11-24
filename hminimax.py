@@ -31,12 +31,12 @@ class PacmanAgent(Agent):
         - A legal move as defined in `game.Directions`.
         """
 
-        action = self.minimax(state)
+        action = self._minimax(state)
         self.lastAction = action
 
         return action
 
-    def minimax(self, state):
+    def _minimax(self, state):
         """
         Given a pacman game state, returns the best legal move computed with
         the H-minimax algorithm with alphabeta pruning.
@@ -57,13 +57,13 @@ class PacmanAgent(Agent):
         interval = [-INF, +INF]
 
         # Loop on the successors of this state
-        for s in self.generateSuccessors(state, 0, self.lastAction):
+        for s in self._generateSuccessors(state, 0, self.lastAction):
 
             minimax = self.minimaxrec(
                 s[0], 1, 0, parentInterval=interval, lastPacmanMove=s[1])
 
             # Update the pruning interval
-            self.updateInterval(interval, minimax, 0)
+            self._updateInterval(interval, minimax, 0)
 
             # Update the best minimax score and action
             if minimax is not None and minimax > max:
@@ -94,10 +94,10 @@ class PacmanAgent(Agent):
 
         # Check if we won or lost or it the maximum depth is reached
         if state.isWin() or state.isLose() or dpt > self.maxDpt:
-            return self.getEstimate(state)
+            return self._getEstimate(state)
 
         # Generate the successors of this state
-        successors = self.generateSuccessors(state, player, lastPacmanMove)
+        successors = self._generateSuccessors(state, player, lastPacmanMove)
 
         # sol  will be the array conaining the minimax results of the children
         sol = []
@@ -110,28 +110,28 @@ class PacmanAgent(Agent):
 
             # Pacman is playing, update last Pacman move
             if(player == 0):
-                minimax = self.minimaxrec(newState, self.getNextPlayer(
+                minimax = self.minimaxrec(newState, self._getNextPlayer(
                     player), dpt + 1, interval, s[1])
             # Ghost is playing, update last ghost move
             else:
-                minimax = self.minimaxrec(newState, self.getNextPlayer(
+                minimax = self.minimaxrec(newState, self._getNextPlayer(
                     player), dpt + 1, interval, lastPacmanMove)
 
             sol.append(minimax)
 
             # Check if we can prune this node
-            if self.shouldPrune(minimax, parentInterval, player):
+            if self._shouldPrune(minimax, parentInterval, player):
                 break
 
             # Update the pruning interval
-            self.updateInterval(interval, minimax, player)
+            self._updateInterval(interval, minimax, player)
 
         # Get the best minimax score
-        best = self.getBest(sol, player)
+        best = self._getBest(sol, player)
 
         return best
 
-    def getEstimate(self, state):
+    def _getEstimate(self, state):
         """
         Compute the estimated minimax score from this state.
 
@@ -144,9 +144,6 @@ class PacmanAgent(Agent):
         - The computed estimated score
         """
 
-        FOOD_COEF = -100
-        DIST_COEF = -5
-        GHOST_COEF = -1
 
         pacmanPosition = state.getPacmanPosition()
         ghostPosition = state.getGhostPositions()[0]
@@ -158,25 +155,35 @@ class PacmanAgent(Agent):
         # Number of food left
         nbFoods = 0
 
+        # Loop over the whole food matrix. Search for the number of food
+        # and for the minimal distance between Pacman and a food
         for i in range(foodMatrix.width):
             for j in range(foodMatrix.height):
                 if foodMatrix[i][j]:
                     nbFoods += 1
-                    tmp = self.__compute_distance(pacmanPosition, (i, j))
+                    tmp = self._compute_distance(pacmanPosition, (i, j))
                     if tmp < minDistance:
                         minDistance = tmp
 
+        # This happens if there no food left in the matrix. If so, set the
+        # distance to the closest food to 0
         if minDistance == INF:
             minDistance = 0
 
-        distToGhost = self.__compute_distance(pacmanPosition, ghostPosition)
+        # Compute distance between pacman and the ghost
+        distToGhost = self._compute_distance(pacmanPosition, ghostPosition)
+
+        # Compute estimate
+        FOOD_COEF = -100
+        DIST_COEF = -5
+        GHOST_COEF = 1
 
         estimate = nbFoods * FOOD_COEF + minDistance * DIST_COEF + \
             state.getScore() + distToGhost * GHOST_COEF
 
         return estimate
 
-    def shouldPrune(self, minimax, interval, player):
+    def _shouldPrune(self, minimax, interval, player):
         """
         Check if the node should be pruned.
 
@@ -204,7 +211,7 @@ class PacmanAgent(Agent):
                 return True
             return False
 
-    def updateInterval(self, interval, minimax, player):
+    def _updateInterval(self, interval, minimax, player):
         """
         Update the interval used to decide the pruning of a node.
 
@@ -222,7 +229,7 @@ class PacmanAgent(Agent):
         else:
             interval[1] = min(minimax, interval[1])
 
-    def generateSuccessors(self, state, player, lastPacmanMove=None):
+    def _generateSuccessors(self, state, player, lastPacmanMove=None):
         """
         Generate successors of the node. If we give the last move of pacman
             as argument, it can possiblygenerate a successor with
@@ -250,14 +257,14 @@ class PacmanAgent(Agent):
                 return nextStates
 
             # If Pacman can stop moving, add an action STOP in the successors
-            if self.canPacmanStop(state, lastPacmanMove):
+            if self._canPacmanStop(state, lastPacmanMove):
                 nextStates.append((state, Directions.STOP))
 
             return nextStates
         else:
             return state.generateGhostSuccessors(1)
 
-    def canPacmanStop(self, state, lastPacmanMove):
+    def _canPacmanStop(self, state, lastPacmanMove):
         """
         Check if Pacman can stay still. Pacman can stay still when he collides
             with a wall and is not given any input.
@@ -289,7 +296,7 @@ class PacmanAgent(Agent):
             return True
         return False
 
-    def getBest(self, solutions, player):
+    def _getBest(self, solutions, player):
         """
         Given an array of minimax score, return the best score for this player.
 
@@ -310,7 +317,7 @@ class PacmanAgent(Agent):
         else:
             return min(solutions)
 
-    def getNextPlayer(self, player):
+    def _getNextPlayer(self, player):
         """
         Get the id of the next player that will play.
 
@@ -328,7 +335,7 @@ class PacmanAgent(Agent):
         else:
             return 0
 
-    def __compute_distance(self, position1, position2):
+    def _compute_distance(self, position1, position2):
         """
         Compute the Manhattan distance beteween 2 positions.
 
